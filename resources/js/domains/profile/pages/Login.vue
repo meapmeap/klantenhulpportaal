@@ -1,25 +1,20 @@
 <script setup lang="ts">
     import { ref } from 'vue';  
     import { useRouter } from 'vue-router';
-    import { postRequest, getRequest } from '../../../services/http';
     import axios from 'axios';
+    import { authStore } from '../../../services/store/auth';
 
     const email = ref('');
     const password = ref('');
 
     const error = ref('');
+    
     const router = useRouter();
 
     const login = async () => {
         error.value = '';
         try {
-            await getRequest('/sanctum/csrf-cookie');
-
-            await postRequest('/login', {
-                email_adres: email.value,
-                wachtwoord: password.value
-            });
-
+            await authStore.login(email.value, password.value);
             router.push({name: 'tickets.overview'});
         } catch (errorResponse) {
             error.value = 'er is iets mis gegaan.';

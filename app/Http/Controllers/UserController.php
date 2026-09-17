@@ -58,4 +58,16 @@ class UserController extends Controller
             'message' => 'Succesvol ingelogd.'
         ]);
     }
+
+    public function logout(Request $request)
+    {
+        Auth::logout();
+
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return response()->json([
+            'message' => 'Succesvol uitgelogd.'
+        ]);
+    }
 }
