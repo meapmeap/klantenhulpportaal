@@ -1,0 +1,50 @@
+resources/js/
+├── domains/
+│   ├── auth/
+│   │   ├── pages/
+│   │   │   ├── Login.vue
+│   │   │   ├── Register.vue
+│   │   │   └── ForgotPassword.vue
+│   │   └── routes.ts
+│   │
+│   ├── tickets/
+│   │   ├── pages/
+│   │   │   ├── TicketOverview.vue
+│   │   │   ├── TicketFormPage.vue
+│   │   │   └── TicketDetails.vue
+│   │   │
+│   │   ├── components/
+│   │   │   ├── TicketList.vue
+│   │   │   ├── TicketForm.vue
+│   │   │   ├── TicketDetailsInfo.vue
+│   │   │   ├── ReactionList.vue
+│   │   │   ├── ReactionForm.vue
+│   │   │   ├── NoteList.vue
+│   │   │   └── NoteForm.vue
+│   │   │
+│   │   └── routes.ts
+│   │
+│   ├── categories/
+│   │   ├── pages/
+│   │   │   ├── CategoryOverview.vue
+│   │   │   ├── CategoryCreate.vue
+│   │   │   └── CategoryEdit.vue
+│   │   ├── components/
+│   │   │   └── CategoryForm.vue
+│   │   └── routes.ts
+│   │
+│   └── users/
+│       ├── pages/
+│       │   ├── UserOverview.vue
+│       │   ├── UserCreate.vue
+│       │   └── UserEdit.vue
+│       ├── components/
+│       │   └── UserForm.vue
+│       └── routes.ts
+│
+├── layouts/
+│   ├── AuthLayout.vue
+│   └── MainLayout.vue
+│
+└── router/
+    └── index.ts

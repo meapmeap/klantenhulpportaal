@@ -1,0 +1,32 @@
+inlog scherm - landing
+
+ticket overzicht - main scherm
+
+wachtwoord herstel scherm/form
+
+account registratie scherm/form
+
+ticket aanmaak/edit schermen en form
+
+ticket details pagina
+
+categorie overzicht
+
+categorie aanmaak/edit schermen en form
+
+reactie aanmaak/edit schermen en form
+
+notitie aanmaak/edit schermen en form? (kan misschien dezelfde zijn als reacties?)
+
+user overzicht
+
+user aanmaak/edit schermen en form
+
+
+domains:
+tickets
+me/profile
+categorieen
+reacties? -\
+notities? -kan allebei in tickets
+users
