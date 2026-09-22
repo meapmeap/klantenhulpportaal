@@ -24,12 +24,15 @@ const fetchUser = async() => {
     }
 };
 
-const login = async(email_adres: string, wachtwoord: string) => {
+const login = async (email_adres: string, wachtwoord: string) => {
     await getRequest('/sanctum/csrf-cookie');
 
-    const { data } = await postRequest('/login', {email_adres, wachtwoord});
+    const { data } = await postRequest('/login', {
+        email_adres,
+        wachtwoord,
+    });
 
-    user.value = data.data;
+    user.value = data.user;
 };
 
 const logout = async() => {

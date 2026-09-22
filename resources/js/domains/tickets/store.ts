@@ -6,6 +6,7 @@ export interface Ticket {
     categorie_id: number;
     status: string;
     created_by: number;
+    user_id: number | null;
     created_at: string;
     updated_at: string;
 }

@@ -23,14 +23,18 @@ export const storeModuleFactory = <Item extends StoreItem, NewItem extends Omit<
     };
 
     const actions = {
-        getAll: async (url = moduleName) => {
-            const { data } = await getRequest(url);
-            if (!data) return;
-            setters.setAll(data);
+        getAll: async (url = `/${moduleName}`) => {
+            const response = await getRequest(url);
+
+    
+
+    if (!response.data) return;
+
+    setters.setAll(response.data);
         },
 
         create: async (item: NewItem) => {
-            const { data } = await postRequest(moduleName, item);
+            const { data } = await postRequest(`/${moduleName}`, item);
             if (!data) return;
             setters.setAll(data);
         },
