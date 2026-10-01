@@ -1,17 +1,16 @@
 <script setup lang="ts">
     import { ticketStore } from '../store';
-    import { onMounted } from 'vue';
-    import { authStore } from '../../../services/store/auth'; 
+    import { computed, onMounted } from 'vue';
+    import { formatDate } from '../../../services/utils/formatDate';
+    import { authStore } from '../../../services/store/auth';
 
     const tickets = ticketStore.getters.all;
 
     onMounted(async () => {
-        if(authStore.isAdmin){
-            await ticketStore.actions.getAll('/api/tickets');
-        } else {
-            await ticketStore.actions.getAll('/api/my-tickets');
-        }
+        await ticketStore.actions.getAll('/api/tickets');
     });
+
+    const isAdmin = computed(() => authStore.isAdmin.value);
 </script>
 
 <template>
@@ -26,17 +25,17 @@
                     <th>Aangemaakt op | </th>
                     <th>Aangemaakt door | </th>
                     <th>Laatste update op | </th>
-                    <th>Toegewezen aan | </th>
+                    <th v-if="isAdmin">Toegewezen aan | </th>
                 </tr>
                 <tr v-for="ticket in tickets" :key="ticket.id">
                     <td>{{ ticket.id }}</td>
-                    <td>{{ ticket.titel }}</td>
-                    <td>{{ ticket.categorie_id }}</td>
+                    <td><router-link :to="{ name: 'tickets.details', params: { id: ticket.id } }">{{ ticket.titel }}</router-link></td>
+                    <td>{{ ticket.categorie }}</td>
                     <td>{{ ticket.status }}</td>
-                    <td>{{ ticket.created_at }}</td>
-                    <td>{{ ticket.created_by }}</td>
-                    <td>{{ ticket.updated_at }}</td>
-                    <td>{{ ticket.user_id }}</td>
+                    <td>{{ formatDate(ticket.created_at) }}</td>
+                    <td>{{ ticket.creator }}</td>
+                    <td>{{ formatDate(ticket.updated_at) }}</td>
+                    <td>{{ ticket.admin }}</td>
                 </tr>
             </tbody>
         </table>

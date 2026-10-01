@@ -19,7 +19,7 @@ class StoreTicketRequest extends FormRequest
     {
         return [
             'titel' => ['required', 'string', 'max:255'],
-            'categorie_id' => ['required', 'integer', 'exists:categories,id'],
+            'categorie_id' => ['required', 'integer', 'exists:categorieen,id'],
         ];
     }
 }

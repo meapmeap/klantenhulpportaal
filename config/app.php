@@ -123,4 +123,9 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+    'frontend_url' => env(
+        'FRONTEND_URL',
+        'http://127.0.0.1:5173'
+    ),
+
 ];

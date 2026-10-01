@@ -4,7 +4,7 @@ import { setMessage, destroyMessage } from "../error";
 
 interface StoreItem { id: number; }
 
-export const storeModuleFactory = <Item extends StoreItem, NewItem extends Omit<Item, 'id'>>(moduleName: string) => {
+export const storeModuleFactory = <Item extends StoreItem, NewItem >(moduleName: string) => {
     const state = ref<Record<number, Item>>({});
 
     const getters = {
@@ -19,37 +19,39 @@ export const storeModuleFactory = <Item extends StoreItem, NewItem extends Omit<
 
         deleteByItem: (item: Item) => {
             delete state.value[item.id];
+        },
+
+        clearState: () => {
+            state.value = {};
         }
     };
 
     const actions = {
-        getAll: async (url = `/${moduleName}`) => {
+        getAll: async (url = `/api/${moduleName}`) => {
             const response = await getRequest(url);
 
-    
+            if (!response.data) return;
 
-    if (!response.data) return;
-
-    setters.setAll(response.data);
+            setters.setAll(response.data);
         },
 
         create: async (item: NewItem) => {
-            const { data } = await postRequest(`/${moduleName}`, item);
+            const { data } = await postRequest(`/api/${moduleName}`, item);
             if (!data) return;
-            setters.setAll(data);
+            state.value[data.id] = Object.freeze(data);
         },
 
         update: async (id: number, item: Item) => {
-            const { data } = await putRequest(`${moduleName}/${id}`, item);
+            const { data } = await putRequest(`/api/${moduleName}/${id}`, item);
             if (!data) return;
-            setters.setAll(data);
+            state.value[data.id] = Object.freeze(data);
         },
 
         delete: async (id: number) => {
             destroyMessage();
 
             try {
-                await deleteRequest(`${moduleName}/${id}`);
+                await deleteRequest(`/api/${moduleName}/${id}`);
                 delete state.value[id];
             } catch (error: any) {
                 setMessage(error.response?.data?.message);

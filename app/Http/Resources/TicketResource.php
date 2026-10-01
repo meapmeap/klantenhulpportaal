@@ -12,12 +12,26 @@ class TicketResource extends JsonResource
         return [
             'id' => $this->id,
             'titel' => $this->titel,
+
             'categorie_id' => $this->categorie_id,
+            'categorie' => $this->categorie?->naam,
+
             'status' => $this->status,
-            'user_id' => $this->user_id,
-            'created_by' => $this->created_by,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
+
+            'created_by' => $this->created_by,
+            'creator' => $this->user ? $this->user->voornaam . ' ' . $this->user->achternaam : null,
+            
+            'user_id' => $this->when(
+                $request->user()->rol === 'admin',
+                $this->user_id
+            ),
+
+            'admin' => $this->when(
+                $request->user()->rol === 'admin',
+                $this->admin ? $this->admin->voornaam . ' ' . $this->admin->achternaam : null
+            ),
         ];
     }
 }

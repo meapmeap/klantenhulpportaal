@@ -16,7 +16,7 @@ const isAdmin = computed(() => user.value?.rol === 'admin');
 
 const fetchUser = async() => {
     try{
-        const { data } = await getRequest('/profile');
+        const { data } = await getRequest('/api/profile');
         
         user.value = data.data;
     } catch{
@@ -27,7 +27,7 @@ const fetchUser = async() => {
 const login = async (email_adres: string, wachtwoord: string) => {
     await getRequest('/sanctum/csrf-cookie');
 
-    const { data } = await postRequest('/login', {
+    const { data } = await postRequest('/api/login', {
         email_adres,
         wachtwoord,
     });
@@ -36,7 +36,7 @@ const login = async (email_adres: string, wachtwoord: string) => {
 };
 
 const logout = async() => {
-    await postRequest('/logout', {});
+    await postRequest('/api/logout', {});
 
     user.value = null;
 };

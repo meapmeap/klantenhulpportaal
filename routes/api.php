@@ -3,12 +3,20 @@
 use App\Http\Controllers\TicketController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\CategorieController;
+use App\Http\Controllers\Auth\PasswordResetController;
+
+//authenticatie
+Route::post('/login', [UserController::class, 'login']);
+Route::post('/register', [UserController::class, 'register']);
+Route::post('/logout', [UserController::class, 'logout']) ->middleware('auth:sanctum');
+
+//wachtwoord reset, mogelijk zonder log in
+Route::post('/forgot-password', [PasswordResetController::class, 'sendResetLink']);
+Route::post('/reset-password', [PasswordResetController::class, 'resetPassword']);
 
 //normale user kan alleen eigen account zien en aanpassen
 Route::get('/profile', [UserController::class, 'profile']) ->middleware('auth:sanctum');
-Route::post('/register', [UserController::class, 'register']);
 //admin kan alle accounts zien, aanpassen en admin maken
 Route::middleware(['auth:sanctum', 'admin'])->group(function () {
     Route::get('/users', [UserController::class, 'index']);
@@ -16,8 +24,12 @@ Route::middleware(['auth:sanctum', 'admin'])->group(function () {
 });
 
 Route::middleware('auth:sanctum')->group(function () {
+    //categories
+    Route::get('/categories', [CategorieController::class, 'index']);
+    //tickets
     Route::get('/tickets', [TicketController::class, 'index']);
-    Route::get('/my-tickets', [TicketController::class, 'myTickets']);
+    Route::get('/my-tickets', [TicketController::class, 'myTickets']); //volgens mij niet meer nodig?
     Route::get('/tickets/{ticket}', [TicketController::class, 'show']);
     Route::post('/tickets', [TicketController::class, 'store']);
+    Route::put('/tickets/{ticket}', [TicketController::class, 'update']);
 });

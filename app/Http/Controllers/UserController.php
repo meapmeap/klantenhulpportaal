@@ -12,11 +12,6 @@ use Illuminate\Support\Facades\Auth;
 class UserController extends Controller
 {
     public function profile(Request $request) {
-        dd([
-        'user' => $request->user(),
-        'auth_user' => Auth::user(),
-        'session' => $request->session()->all(),
-    ]);
         return new UserResource($request->user());
     }
 
@@ -41,8 +36,7 @@ class UserController extends Controller
         return new UserResource($user); 
     }
 
-    /*public function login(Request $request)
-    {
+    public function login(Request $request) {
         $credentials = $request->validate([
             'email_adres' => ['required', 'email'],
             'wachtwoord' => ['required'],
@@ -52,46 +46,21 @@ class UserController extends Controller
             'email_adres' => $credentials['email_adres'],
             'password' => $credentials['wachtwoord'],
         ])) {
-            return response()->json([
-                'message' => 'De ingevoerde gegevens zijn onjuist.'
-            ], 401);
+            return response()->json(['message' => 'De ingevoerde gegevens zijn onjuist.'], 401);
         }
 
         $request->session()->regenerate();
 
         return response()->json([
-            'message' => 'Succesvol ingelogd.'
+            'message' => 'Succesvol ingelogd.',
+            'user' => Auth::user(),
+            'session_id' => $request->session()->getId(),
         ]);
-    }*/
-
-    public function login(Request $request)
-{
-    $credentials = $request->validate([
-        'email_adres' => ['required', 'email'],
-        'wachtwoord' => ['required'],
-    ]);
-
-    if (!Auth::attempt([
-        'email_adres' => $credentials['email_adres'],
-        'password' => $credentials['wachtwoord'],
-    ])) {
-        return response()->json([
-            'message' => 'De ingevoerde gegevens zijn onjuist.'
-        ], 401);
     }
-
-    $request->session()->regenerate();
-
-    return response()->json([
-        'message' => 'Succesvol ingelogd.',
-        'user' => Auth::user(),
-        'session_id' => $request->session()->getId(),
-    ]);
-}
 
     public function logout(Request $request)
     {
-        Auth::logout();
+        Auth::guard('web')->logout();
 
         $request->session()->invalidate();
         $request->session()->regenerateToken();

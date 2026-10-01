@@ -12,7 +12,7 @@ class StoreUserRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return $this->user()?->rol === 'administrator';
+        return $this->user()?->rol === 'admin';
     }
 
     /**
@@ -28,7 +28,7 @@ class StoreUserRequest extends FormRequest
             'email_adres' => 'required|email|max:255|unique:users,email_adres', 
             'wachtwoord' => 'required|string|min:8', 
             'telefoonnummer' => 'nullable|string|max:20', 
-            'rol' => 'required|string|in:user,administrator',
+            'rol' => 'required|string|in:user,admin',
         ];
     }
 }

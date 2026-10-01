@@ -23,7 +23,7 @@ class TicketFactory extends Factory
             'titel' => fake()->sentence(4),
             'categorie_id' => Categorie::inRandomOrder()->first()->id,
             'status' => fake()->randomElement(['Nieuw', 'Toegewezen', 'Klaar', 'Probleem']),
-            'user_id' => User::where('rol', 'administrator')->inRandomOrder()->first()->id,
+            'user_id' => User::where('rol', 'admin')->inRandomOrder()->first()->id,
             'created_by' => User::where('rol', 'user')->inRandomOrder()->first()->id
         ];
     }
