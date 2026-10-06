@@ -20,6 +20,8 @@ class StoreTicketRequest extends FormRequest
         return [
             'titel' => ['required', 'string', 'max:255'],
             'categorie_id' => ['required', 'integer', 'exists:categorieen,id'],
+            'user_id' => ['nullable', 'integer', 'exists:users,id'],
+            'status' => ['sometimes', 'string', 'in:Nieuw,In behandeling,Afgehandeld'],
         ];
     }
 }

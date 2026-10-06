@@ -21,6 +21,12 @@ class UserController extends Controller
         return UserResource::collection($users); 
     }
 
+    public function admins() {
+        $admins = User::where('rol', 'admin')->get();
+        
+        return UserResource::collection($admins);
+    }
+
     public function store(StoreUserRequest $request) { 
         $user = User::create($request->validated()); 
         

@@ -14,6 +14,8 @@ export interface Ticket {
     admin: string | null;
 }
 
-export type NewTicket = Omit<Ticket, 'id' | 'status' | 'created_by' | 'created_at' | 'updated_at' | 'categorie' | 'creator' | 'admin'>;
+export type NewTicket = Pick<Ticket, 'titel' | 'categorie_id' | 'user_id'>;
+
+export const statuses = ['Nieuw', 'In behandeling', 'Afgehandeld']
 
 export const ticketStore = storeModuleFactory<Ticket, NewTicket>('tickets');

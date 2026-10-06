@@ -1,6 +1,6 @@
 <script setup lang="ts">
     import { ref } from 'vue';
-    import { postRequest } from '../../../services/http';
+    import { authStore } from '../../../services/store/auth';
 
     const email_adres = ref('');
     const message = ref('');
@@ -8,15 +8,11 @@
 
     const sendResetLink = async () => {
         message.value = '';
-
+        error.value = '';
         try {
-            const response = await postRequest('/api/forgot-password', { email_adres: email_adres.value, });
-
-            message.value = response.data.message;
+            message.value = await authStore.sendResetLink(email_adres.value);
         } catch (err: any) {
-            error.value =
-            err.response?.data?.message ??
-            'Er is iets misgegaan bij het aanvragen van de wachtwoordreset.';
+            error.value = err.response?.data?.message ?? 'Er is iets misgegaan bij het aanvragen van de wachtwoordreset.';
         } 
     };
 </script>

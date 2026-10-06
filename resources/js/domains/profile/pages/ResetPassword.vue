@@ -1,10 +1,9 @@
 <script setup lang="ts">
     import { ref } from 'vue';
-    import { useRoute, useRouter } from 'vue-router';
+    import { useRoute } from 'vue-router';
     import { postRequest } from '../../../services/http';
 
     const route = useRoute();
-    const router = useRouter();
 
     const password = ref('');
     const password_confirmation = ref('');
@@ -14,6 +13,11 @@
     const resetPassword = async () => {
         message.value = '';
         error.value = '';
+
+        if (!route.query.email || !route.query.token) {
+            error.value = 'De wachtwoordresetlink is ongeldig of onvolledig.';
+            return;
+        }
 
         try {
             const response = await postRequest('/api/reset-password', {

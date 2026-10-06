@@ -17,18 +17,19 @@ Route::post('/reset-password', [PasswordResetController::class, 'resetPassword']
 
 //normale user kan alleen eigen account zien en aanpassen
 Route::get('/profile', [UserController::class, 'profile']) ->middleware('auth:sanctum');
-//admin kan alle accounts zien, aanpassen en admin maken
+//routes die alleen gebruikt kunnen worden als je bent ingelogd als admin
 Route::middleware(['auth:sanctum', 'admin'])->group(function () {
+    Route::get('/users/admins', [UserController::class, 'admins']);
     Route::get('/users', [UserController::class, 'index']);
     Route::post('/users', [UserController::class, 'store']);
 });
 
+//routes die iedereen kan gebruiken die is ingelogd
 Route::middleware('auth:sanctum')->group(function () {
     //categories
     Route::get('/categories', [CategorieController::class, 'index']);
     //tickets
     Route::get('/tickets', [TicketController::class, 'index']);
-    Route::get('/my-tickets', [TicketController::class, 'myTickets']); //volgens mij niet meer nodig?
     Route::get('/tickets/{ticket}', [TicketController::class, 'show']);
     Route::post('/tickets', [TicketController::class, 'store']);
     Route::put('/tickets/{ticket}', [TicketController::class, 'update']);

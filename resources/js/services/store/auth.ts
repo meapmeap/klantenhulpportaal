@@ -35,6 +35,12 @@ const login = async (email_adres: string, wachtwoord: string) => {
     user.value = data.user;
 };
 
+const sendResetLink = async (email_adres: string) => {
+    const { data } = await postRequest('/api/forgot-password', { email_adres });
+
+    return data.message;
+};
+
 const logout = async() => {
     await postRequest('/api/logout', {});
 
@@ -47,5 +53,6 @@ export const authStore = {
     isAdmin,
     fetchUser,
     login,
+    sendResetLink,
     logout
 };
