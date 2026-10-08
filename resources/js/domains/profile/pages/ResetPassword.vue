@@ -1,7 +1,7 @@
 <script setup lang="ts">
     import { ref } from 'vue';
     import { useRoute } from 'vue-router';
-    import { postRequest } from '../../../services/http';
+    import { authStore } from '../../../services/store/auth';
 
     const route = useRoute();
 
@@ -20,14 +20,14 @@
         }
 
         try {
-            const response = await postRequest('/api/reset-password', {
-                email_adres: route.query.email,
-                token: route.query.token,
-                password: password.value,
-                password_confirmation: password_confirmation.value,
-            });
+            const response = await authStore.resetPassword(
+                route.query.email as string,
+                route.query.token as string,
+                password.value,
+                password_confirmation.value
+            );
 
-            message.value = response.data.message;
+            message.value = response.message;
 
             password.value = '';
             password_confirmation.value = '';

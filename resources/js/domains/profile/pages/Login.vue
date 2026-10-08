@@ -28,7 +28,7 @@
 <template>
     <div>
         <p v-if="error">{{ error }}</p><br>
-        <h1>Log in.</h1><br>
+        <h2>Log in.</h2><br>
         <form @submit.prevent="login">
             <label for="username">Email adres:</label>
             <input id="username" v-model="email" type="text" required />

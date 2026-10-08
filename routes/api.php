@@ -19,9 +19,14 @@ Route::post('/reset-password', [PasswordResetController::class, 'resetPassword']
 Route::get('/profile', [UserController::class, 'profile']) ->middleware('auth:sanctum');
 //routes die alleen gebruikt kunnen worden als je bent ingelogd als admin
 Route::middleware(['auth:sanctum', 'admin'])->group(function () {
+    //users
     Route::get('/users/admins', [UserController::class, 'admins']);
     Route::get('/users', [UserController::class, 'index']);
     Route::post('/users', [UserController::class, 'store']);
+    //categories
+    Route::post('/categories', [CategorieController::class, 'store']);
+    Route::put('/categories/{categorie}', [CategorieController::class, 'update']);
+    Route::delete('/categories/{categorie}', [CategorieController::class, 'destroy']);
 });
 
 //routes die iedereen kan gebruiken die is ingelogd

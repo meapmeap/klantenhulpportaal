@@ -2,12 +2,17 @@
     import { onMounted, ref } from 'vue';
     import { Ticket, NewTicket } from '../store';
     import { categorieStore } from '../../categories/store';
+    import { useRoute } from 'vue-router';
+
+    const route = useRoute();
 
     const categories = categorieStore.getters.all;
 
     onMounted(() => {
         categorieStore.actions.getAll();
     });
+
+    const ticketId = Number(route.params.id);
 
     const props = defineProps<{ ticket: Item }>();
     const emit = defineEmits<{ submit: [ticket: Item]; }>();
@@ -32,6 +37,6 @@
         <br><br>
 
         <button type="submit">Versturen</button> | 
-        <router-link :to="{name: 'tickets.overview'}">Annuleren</router-link>
+        <router-link :to="{name: 'tickets.details', params: { id: ticketId }}">Annuleren</router-link>
     </form>
 </template>

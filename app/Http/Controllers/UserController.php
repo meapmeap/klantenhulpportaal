@@ -8,6 +8,7 @@ use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\RegisterUserRequest;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use App\Notifications\AccountCreatedNotification;
 
 class UserController extends Controller
 {
@@ -38,6 +39,8 @@ class UserController extends Controller
         $data['rol'] = 'user'; 
         
         $user = User::create($data); 
+
+        $user->notify(new AccountCreatedNotification());
         
         return new UserResource($user); 
     }

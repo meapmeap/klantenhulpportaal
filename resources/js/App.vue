@@ -7,6 +7,7 @@
     const router = useRouter();
 
     const isLoggedIn = computed(() => authStore.isLoggedIn.value);
+    const isAdmin = computed(() => authStore.isAdmin.value);
 
     onMounted(async () => {
         await authStore.fetchUser();
@@ -25,8 +26,10 @@
 
 <template>
     <nav>
-        <button v-if="isLoggedIn" @click="logout">Uitloggen</button> | 
-        <router-link v-if="isLoggedIn" :to="{name: 'tickets.create'}">Nieuwe ticket aanmaken</router-link>
+        <button v-if="isLoggedIn" @click="logout">Uitloggen | </button>
+        <router-link v-if="isLoggedIn" :to="{name: 'tickets.create'}"> Nieuwe ticket aanmaken | </router-link>
+        <router-link v-if="isLoggedIn" :to="{name: 'tickets.overview'}">Ticket overzicht</router-link>
+        <router-link v-if="isAdmin" :to="{name: 'categories.overview'}"> | Categorieen overzicht | </router-link>
     </nav>
     <router-view></router-view>
 </template>

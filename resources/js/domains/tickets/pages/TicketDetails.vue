@@ -33,8 +33,7 @@
 <template>
     <div v-if="ticket">
         <br>
-        <router-link :to="{name: 'tickets.overview'}">Terug naar overzicht</router-link> | 
-        <router-link :to="{name: 'tickets.edit', params:{id: ticketID}}">Ticket bewerken</router-link> | 
+        <router-link :to="{name: 'tickets.edit', params:{id: ticketID}}">Ticket bewerken</router-link>
         <div v-if="isAdmin">
             <br>
             <h2>Admin opties:</h2>

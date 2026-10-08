@@ -35,10 +35,44 @@ const login = async (email_adres: string, wachtwoord: string) => {
     user.value = data.user;
 };
 
+const register = async (
+    voornaam: string,
+    achternaam: string,
+    email_adres: string,
+    wachtwoord: string,
+    telefoonnummer?: string
+) => {
+    const { data } = await postRequest('/api/register', {
+        voornaam,
+        achternaam,
+        email_adres,
+        wachtwoord,
+        telefoonnummer,
+    });
+
+    return data;
+};
+
 const sendResetLink = async (email_adres: string) => {
     const { data } = await postRequest('/api/forgot-password', { email_adres });
 
     return data.message;
+};
+
+const resetPassword = async (
+    email_adres: string,
+    token: string,
+    password: string,
+    password_confirmation: string
+) => {
+    const response = await postRequest('/api/reset-password', {
+        email_adres,
+        token,
+        password,
+        password_confirmation,
+    });
+
+    return response.data;
 };
 
 const logout = async() => {
@@ -53,6 +87,8 @@ export const authStore = {
     isAdmin,
     fetchUser,
     login,
+    register,
     sendResetLink,
+    resetPassword,
     logout
 };
