@@ -29,6 +29,10 @@ class CategorieController extends Controller
 
     public function destroy(Categorie $categorie)
     {
+        if ($categorie->tickets()->exists()) {
+            return response()->json(['message' => 'Deze categorie kan niet worden verwijderd omdat er nog tickets aan verbonden zijn.'], 422);
+        }
+
         $categorie->delete();
 
         return response()->json([

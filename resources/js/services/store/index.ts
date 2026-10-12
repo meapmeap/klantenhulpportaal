@@ -55,6 +55,7 @@ export const storeModuleFactory = <Item extends StoreItem, NewItem >(moduleName:
                 delete state.value[id];
             } catch (error: any) {
                 setMessage(error.response?.data?.message);
+                throw error;
             }
         }
     };

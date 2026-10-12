@@ -9,6 +9,11 @@ use App\Models\Ticket;
 
 class TicketController extends Controller
 {
+    private function canAccessTicket(Request $request, Ticket $ticket): bool
+    {
+        return $request->user()->rol === 'admin' || $ticket->created_by === $request->user()->id;
+    }
+
     public function index(Request $request)
     {
         $query = Ticket::with(['user', 'admin'])->orderBy('created_at', 'desc');
@@ -20,8 +25,10 @@ class TicketController extends Controller
         return TicketResource::collection($query->get());
     }
 
-    public function show(Ticket $ticket)
+    public function show(Request $request, Ticket $ticket)
     {
+        if (!$this->canAccessTicket($request, $ticket)) {abort(403);}
+
         return new TicketResource($ticket);
     }
 
@@ -48,6 +55,8 @@ class TicketController extends Controller
 
     public function update(StoreTicketRequest $request, Ticket $ticket)
     {
+        if (!$this->canAccessTicket($request, $ticket)) {abort(403);}
+
         $ticket->update($request->validated());
 
         return new TicketResource($ticket);

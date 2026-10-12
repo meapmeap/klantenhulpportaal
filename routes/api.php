@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\CategorieController;
 use App\Http\Controllers\Auth\PasswordResetController;
+use App\Http\Controllers\ReactieController;
 
 //authenticatie
 Route::post('/login', [UserController::class, 'login']);
@@ -38,4 +39,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/tickets/{ticket}', [TicketController::class, 'show']);
     Route::post('/tickets', [TicketController::class, 'store']);
     Route::put('/tickets/{ticket}', [TicketController::class, 'update']);
+    //reacties
+    Route::get('/tickets/{ticket}/reacties', [ReactieController::class, 'index']);
+    Route::post('/tickets/{ticket}/reacties', [ReactieController::class, 'store']);
 });

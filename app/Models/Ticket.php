@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use App\Models\Reactie;
 
 class Ticket extends Model
 {
@@ -25,7 +26,7 @@ class Ticket extends Model
         return $this->belongsTo(Categorie::class, 'categorie_id');
     }
 
-    public function reactie(): HasMany {
+    public function reacties(): HasMany {
         return $this->hasMany(Reactie::class, 'ticket_id');
     }
 

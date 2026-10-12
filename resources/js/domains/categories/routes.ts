@@ -1,6 +1,6 @@
 import Overview from "./pages/CategoryOverview.vue";
 import Create from "./pages/CategoryCreate.vue";
-import Edit from "./pages/CategoryCreate.vue";
+import Edit from "./pages/CategoryEdit.vue";
 
 export const categoryRoutes = [
     { path: '/categories', component: Overview, name: 'categories.overview' },
