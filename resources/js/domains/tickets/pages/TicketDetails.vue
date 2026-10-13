@@ -1,15 +1,16 @@
 <script setup lang="ts">
-    import { statuses, ticketStore } from '../store';
+    import { Message, statuses, ticketStore, getReacties, addReactie } from '../store';
     import { adminStore } from '../../users/store';
     import { useRoute } from 'vue-router';
     import { formatDate } from '../../../services/utils/formatDate';
     import { authStore } from '../../../services/store/auth';
     import { computed, onMounted, ref } from 'vue';
+    import ReactionForm from '../components/ReactionForm.vue';
 
     const route = useRoute();
     
-    const ticketID = Number(route.params.id);
-    const ticket = ticketStore.getters.getById(ticketID);
+    const ticketId = Number(route.params.id);
+    const ticket = ticketStore.getters.getById(ticketId);
 
     const selectedAdmin = ref<number | null>(ticket.value?.user_id ?? null);
     const selectedStatus = ref(ticket.value?.status ?? '');
@@ -17,23 +18,40 @@
     const isAdmin = computed(() => authStore.isAdmin.value);
     const admins = adminStore.getters.all;
 
+    const reacties = ref<Message[]>([]);
+    const showReactieForm = ref(false);
+
+    onMounted(async () => {
+        reacties.value = await getReacties(ticketId);
+    });
+
+    //const notities
+    //const showNotitieForm
+
     onMounted(async () => {
         if(isAdmin.value){
             await adminStore.actions.getAll('/api/users/admins');
         }
     });
 
+    const submitReactie = async (bericht: string) => {
+        const reactie = await addReactie(ticketId, { bericht });
+
+        reacties.value.push(reactie);
+        showReactieForm.value = false;
+    }
+
     const confirmChanges = async () => {
         if (!ticket.value) return;
         
-        await ticketStore.actions.update(ticketID, {...ticket.value, user_id: selectedAdmin.value, status: selectedStatus.value});
+        await ticketStore.actions.update(ticketId, {...ticket.value, user_id: selectedAdmin.value, status: selectedStatus.value});
     }
 </script>
 
 <template>
     <div v-if="ticket">
         <br>
-        <router-link :to="{name: 'tickets.edit', params:{id: ticketID}}">Ticket bewerken</router-link>
+        <router-link :to="{name: 'tickets.edit', params:{id: ticketId}}">Ticket bewerken</router-link>
         <div v-if="isAdmin">
             <br>
             <h2>Admin opties:</h2>
@@ -63,8 +81,23 @@
         <div v-if="isAdmin">
             Notities:
         </div>
+        <br>
         <div>
-            Reacties:
+            <button v-if="!showReactieForm" @click="showReactieForm = true">
+                Voeg reactie toe.
+            </button>
+            <reactionForm v-if="showReactieForm" @submit="submitReactie" />
+            <button v-if="showReactieForm" @click="showReactieForm = false">
+                Annuleren
+            </button>
+            <br>
+            <h2>Reacties:</h2>
+            <p v-if="reacties.length === 0">Nog geen reacties...</p>
+            <div v-for="reactie in reacties" :key="reactie.id">
+                <strong>{{ reactie.user }}</strong>
+                <p>{{ reactie.bericht }}</p>
+                <p>{{ formatDate(reactie.created_at) }}</p>
+            </div>
         </div>
     </div>
 </template>

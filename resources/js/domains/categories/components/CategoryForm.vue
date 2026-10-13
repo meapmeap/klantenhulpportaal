@@ -20,7 +20,7 @@
         <textarea v-model="form.beschrijving"></textarea>
         <br><br>
 
-        <button type="submit">Opslaan.</button>
+        <button type="submit">Opslaan</button> | 
         <router-link :to="{name: 'categories.overview'}">Annuleren</router-link>
     </form>
 </template>

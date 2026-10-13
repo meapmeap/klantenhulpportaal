@@ -6,6 +6,9 @@ use App\Http\Requests\StoreReactieRequest;
 use App\Http\Resources\ReactieResource;
 use App\Models\Ticket;
 use Illuminate\Http\Request;
+use App\Mail\ReactieToegevoegdMail;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Log;
 
 class ReactieController extends Controller
 {
@@ -38,6 +41,24 @@ class ReactieController extends Controller
             'bericht' => $request->validated()['bericht'],
             'user_id' => $request->user()->id,
         ]);
+        
+        $reactie->load('user');
+        if ($request->user()->rol === 'admin') {
+            try {
+                $ticket->load('user');
+
+                if ($ticket->user) {
+                    Mail::to($ticket->user->email_adres)
+                    ->send(new ReactieToegevoegdMail($ticket, $reactie));
+                }
+            } catch (\Throwable $e) {
+                Log::error('E-mail bij nieuwe ticketreactie mislukt', [
+                    'ticket_id' => $ticket->id,
+                    'reactie_id' => $reactie->id,
+                    'error' => $e->getMessage(),
+                ]);
+            }
+        }
 
         return new ReactieResource($reactie->load('user'));
     }
