@@ -1,5 +1,5 @@
 import { storeModuleFactory } from "../../services/store";
-import { getRequest, postRequest } from "../../services/http";
+import { getRequest, postRequest, putRequest } from "../../services/http";
 
 export interface Ticket {
     id: number;
@@ -33,14 +33,27 @@ export const statuses = ['Nieuw', 'In behandeling', 'Afgehandeld']
 
 export const ticketStore = storeModuleFactory<Ticket, NewTicket>('tickets');
 
-export const getReacties = async (ticketId: number) => {
-    const { data } = await getRequest(`/api/tickets/${ticketId}/reacties`);
+const createMessageActions = (moduleName: 'reacties' | 'notities') => {
+    return {
+        getAll: async (ticketId: number) => {
+            const { data } = await getRequest( `/api/tickets/${ticketId}/${moduleName}` ); 
+            
+            return data;
+        },
 
-    return data;
-};
+        create: async (ticketId: number, message: NewMessage) => {
+            const { data } = await postRequest( `/api/tickets/${ticketId}/${moduleName}`, message ); 
+            
+            return data;
+        },
 
-export const addReactie = async (ticketId: number, reactie: NewMessage) => {
-    const { data } = await postRequest(`/api/tickets/${ticketId}/reacties`, reactie);
+        update: async (ticketId: number, messageId: number, message: NewMessage) => {
+            const { data } = await putRequest( `/api/tickets/${ticketId}/${moduleName}/${messageId}`, message ); 
+            
+            return data;
+        },
+    }
+}
 
-    return data;
-};
+export const reactieActions = createMessageActions('reacties');
+export const notitieActions = createMessageActions('notities');

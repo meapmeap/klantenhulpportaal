@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreReactieRequest;
 use App\Http\Resources\ReactieResource;
 use App\Models\Ticket;
+use App\Models\Reactie;
 use Illuminate\Http\Request;
 use App\Mail\ReactieToegevoegdMail;
 use Illuminate\Support\Facades\Mail;
@@ -59,6 +60,22 @@ class ReactieController extends Controller
                 ]);
             }
         }
+
+        return new ReactieResource($reactie->load('user'));
+    }
+
+    public function update(StoreReactieRequest $request, Ticket $ticket, Reactie $reactie) {
+        if ($request->user()->rol !== 'admin') {
+            abort(403);
+        }
+
+        if ((int) $reactie->ticket_id !== (int) $ticket->id) {
+            abort(404);
+        }
+
+        $reactie->update([
+            'bericht' => $request->validated()['bericht'],
+        ]);
 
         return new ReactieResource($reactie->load('user'));
     }

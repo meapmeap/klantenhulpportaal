@@ -1,24 +1,31 @@
 <script setup lang="ts">
-    import { ref } from 'vue';
+    import { ref, watch } from 'vue';
 
-    const emit = defineEmits<{submit: [message: string];}>();
+    const props = defineProps<{initialMessage?: string;}>();
+    const emit = defineEmits<{submit: [message: string]; cancel: [];}>();
 
-    const reactie = ref('');
+    const reactie = ref(props.initialMessage ?? '');
+
+    watch(() =>props.initialMessage, (message) =>{
+        reactie.value = message ?? '';
+    });
 
     const handleSubmit = () => {
         if(!reactie.value.trim()) {return;}
 
         emit('submit', reactie.value);
-        reactie.value = '';
     }
 </script>
 
 <template>
     <form @submit.prevent="handleSubmit">
-        <label>Bericht:</label>
+        <label for="reactie">Bericht:</label>
         <br>
         <textarea id="reactie" v-model="reactie" required></textarea>
         <br>
-        <button type="submit">Versturen</button>
+        <button type="submit">Opslaan</button>
+        <button v-if="initialMessage !== undefined" type="button" @click="emit('cancel')">
+            Annuleren
+        </button>
     </form>
 </template>

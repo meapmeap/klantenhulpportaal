@@ -17,12 +17,4 @@ class StoreReactieRequest extends FormRequest
             'bericht' => ['required', 'string'],
         ];
     }
-
-    public function messages(): array
-    {
-        return [
-            'bericht.required' => 'Een reactie is verplicht.',
-            'bericht.string' => 'De reactie moet tekst bevatten.',
-        ];
-    }
 }

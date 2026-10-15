@@ -6,6 +6,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\CategorieController;
 use App\Http\Controllers\Auth\PasswordResetController;
 use App\Http\Controllers\ReactieController;
+use App\Http\Controllers\NotitieController;
 
 //authenticatie
 Route::post('/login', [UserController::class, 'login']);
@@ -18,6 +19,7 @@ Route::post('/reset-password', [PasswordResetController::class, 'resetPassword']
 
 //normale user kan alleen eigen account zien en aanpassen
 Route::get('/profile', [UserController::class, 'profile']) ->middleware('auth:sanctum');
+
 //routes die alleen gebruikt kunnen worden als je bent ingelogd als admin
 Route::middleware(['auth:sanctum', 'admin'])->group(function () {
     //users
@@ -28,6 +30,10 @@ Route::middleware(['auth:sanctum', 'admin'])->group(function () {
     Route::post('/categories', [CategorieController::class, 'store']);
     Route::put('/categories/{categorie}', [CategorieController::class, 'update']);
     Route::delete('/categories/{categorie}', [CategorieController::class, 'destroy']);
+    //notities
+    Route::get('/tickets/{ticket}/notities', [NotitieController::class, 'index']);
+    Route::post('/tickets/{ticket}/notities', [NotitieController::class, 'store']);
+    Route::put('/tickets/{ticket}/notities/{notitie}', [NotitieController::class, 'update']);
 });
 
 //routes die iedereen kan gebruiken die is ingelogd
@@ -42,4 +48,5 @@ Route::middleware('auth:sanctum')->group(function () {
     //reacties
     Route::get('/tickets/{ticket}/reacties', [ReactieController::class, 'index']);
     Route::post('/tickets/{ticket}/reacties', [ReactieController::class, 'store']);
+    Route::put('/tickets/{ticket}/reacties/{reactie}', [ReactieController::class, 'update']);
 });
