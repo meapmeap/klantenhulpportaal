@@ -19,3 +19,13 @@ export const setMessage = (newMessage: string) => {
 
 export const destroyErrors = () => (errorBag.value = {});
 export const destroyMessage = () => (message.value = '');
+
+export const handleValidationError = (error: any) => {
+    const errors = error.response?.data?.errors;
+
+    if (errors) {
+        setErrorBag(errors);
+    } else {
+        setMessage(error.response?.data?.message || 'Er is een fout opgetreden.');
+    }
+};
