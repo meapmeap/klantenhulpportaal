@@ -1,4 +1,5 @@
 import { computed, ref } from 'vue';
+import axios from 'axios';
 
 interface ErrorBag {
     [property: string]: string[];
@@ -20,12 +21,33 @@ export const setMessage = (newMessage: string) => {
 export const destroyErrors = () => (errorBag.value = {});
 export const destroyMessage = () => (message.value = '');
 
-export const handleValidationError = (error: any) => {
-    const errors = error.response?.data?.errors;
+export const handleApiError = (error: unknown) => {
+    if (axios.isAxiosError(error)) {
+        const response = error.response?.data;
 
-    if (errors) {
-        setErrorBag(errors);
+        if (response?.errors) {
+            setErrorBag(response.errors);
+            destroyMessage();
+        } else {
+            destroyErrors();
+            setMessage(response?.message || 'Er is een fout opgetreden.');
+        }
     } else {
-        setMessage(error.response?.data?.message || 'Er is een fout opgetreden.');
+        destroyErrors();
+        setMessage('Er is een onverwachte fout opgetreden.');
+    }
+};
+
+type ActionResult<T> =
+    | { success: true; data: T }
+    | { success: false };
+
+export const handleApiAction = async <T>(action: () => Promise<T>): Promise<ActionResult<T>> => {
+    try {
+        const data = await action();
+        return { success: true, data };
+    } catch {
+        // De Axios-interceptor heeft de fout al afgehandeld.
+        return { success: false };
     }
 };

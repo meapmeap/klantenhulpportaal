@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { handleApiError } from '../error';
 
 const http = axios.create({
     baseURL: 'http://127.0.0.1:8000',
@@ -8,6 +9,14 @@ const http = axios.create({
         Accept: 'application/json',
     },
 });
+
+http.interceptors.response.use(
+    response => response,
+    error => {
+        handleApiError(error);
+        return Promise.reject(error);
+    }
+);
 
 export const getRequest = (endpoint: string) => http.get(endpoint);
 export const postRequest = <Item>(endpoint: string, data: Item) => http.post(endpoint, data);

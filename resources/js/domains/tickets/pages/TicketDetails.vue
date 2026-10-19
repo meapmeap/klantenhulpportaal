@@ -6,9 +6,10 @@
     import { authStore } from '../../../services/store/auth';
     import { computed, onMounted, ref } from 'vue';
     import ReactionForm from '../components/ReactionForm.vue';
+    import { destroyMessage, destroyErrors, handleApiAction, getMessage } from '../../../services/error';
 
     const route = useRoute();
-    //                                    Maak een error bag om de errors en try/catch eruit te halen. Mogelijk nog notitie en reactie functies verder combineren
+
     const ticketId = Number(route.params.id);
     const ticket = ticketStore.getters.getById(ticketId);
 
@@ -17,124 +18,133 @@
 
     const isAdmin = computed(() => authStore.isAdmin.value);
     const admins = adminStore.getters.all;
-
     //reacties
     const reacties = ref<Message[]>([]);
     const showReactieForm = ref(false);
     const editingReactieId = ref<number | null>(null);
-    const reactieError = ref('');
-
     //notities
     const notities = ref<Message[]>([]); 
     const showNotitieForm = ref(false); 
     const editingNotitieId = ref<number | null>(null); 
-    const notitieError = ref('');
 
-    onMounted(async () => { 
-        try { 
-            reacties.value = await reactieActions.getAll(ticketId); 
-        } catch (error) { 
-            console.error('Reacties ophalen mislukt:', error); 
-            reactieError.value = 'De reacties konden niet worden opgehaald.'; 
-        } 
-        
-        if (isAdmin.value) { 
-            try { 
-                notities.value = await notitieActions.getAll(ticketId); 
-            } catch (error) { 
-                console.error('Notities ophalen mislukt:', error); 
-                notitieError.value = 'De notities konden niet worden opgehaald.'; 
-            } 
-            
-            await adminStore.actions.getAll('/api/users/admins'); 
-        } 
+    onMounted(async () => {
+        const reactiesResult = await handleApiAction(() => reactieActions.getAll(ticketId));
+
+        if (reactiesResult.success) {
+            reacties.value = reactiesResult.data;
+        }
+
+        if (isAdmin.value) {
+            const notitiesResult = await handleApiAction(() => notitieActions.getAll(ticketId));
+
+            if (notitiesResult.success) {
+                notities.value = notitiesResult.data;
+            }
+
+            await handleApiAction(() => adminStore.actions.getAll('/api/users/admins'));
+        }
     });
+    //vervanger voor notitie of reactie
+    const replaceMessage = (items: Message[], updatedMessage: Message) => {
+        const index = items.findIndex(item => item.id === updatedMessage.id);
 
+        if (index !== -1) {
+            items[index] = updatedMessage;
+        }
+    };
     //reactie crud functies
     const submitReactie = async (bericht: string) => {
-        reactieError.value = '';
+        destroyErrors();
+        destroyMessage();
 
-        try {
-            const reactie = await reactieActions.create(ticketId, { bericht });
+        const result = await handleApiAction(() =>
+            reactieActions.create(ticketId, { bericht })
+        );
 
-            reacties.value.push(reactie);
+        if (!result.success) return;
 
-            showReactieForm.value = false;
-        } catch (error) {
-            console.error('Reactie toevoegen mislukt:', error);
-            reactieError.value = 'De reactie kon niet worden toegevoegd. Probeer het opnieuw.';
-        }
+        reacties.value.push(result.data);
+        showReactieForm.value = false;
     }
 
     const startEdit = (reactie: Message) => { editingReactieId.value = reactie.id; };
     const cancelEdit = () => { editingReactieId.value = null; };
 
     const saveEdit = async (reactie: Message, bericht: string) => { 
-        reactieError.value = '';
+        destroyErrors();
+        destroyMessage();
 
-        try {
-            const updatedReactie = await reactieActions.update(ticketId, reactie.id, { bericht: bericht.trim() });
+        const result = await handleApiAction(() =>
+            reactieActions.update(ticketId, reactie.id, {bericht: bericht.trim()})
+        );
 
-            const index = reacties.value.findIndex(item => item.id === reactie.id);
+        if (!result.success) return;
 
-            if (index !== -1) {
-                reacties.value[index] = updatedReactie;
-            }
-
-            editingReactieId.value = null;
-        } catch (error) {
-            console.error('Reactie wijzigen mislukt:', error);
-            reactieError.value = 'De reactie kon niet worden gewijzigd. Probeer het opnieuw.';
-        }
+        replaceMessage(reacties.value, result.data);
+        editingReactieId.value = null;
     };
-
     //notities crud functies
     const submitNotitie = async (bericht: string) => { 
-        notitieError.value = ''; 
-        
-        try { 
-            const notitie = await notitieActions.create( ticketId, { bericht: bericht.trim() } ); 
-            
-            notities.value.push(notitie); 
-            
-            showNotitieForm.value = false; 
-        } catch (error) { 
-            console.error('Notitie toevoegen mislukt:', error); 
-            notitieError.value = 'De notitie kon niet worden toegevoegd. Probeer het opnieuw.'; 
-        } 
+        destroyErrors();
+        destroyMessage();
+
+        const result = await handleApiAction(() =>
+            notitieActions.create(ticketId, {bericht: bericht.trim()})
+        );
+
+        if (!result.success) return;
+
+        notities.value.push(result.data);
+        showNotitieForm.value = false;
     }; 
     
     const startEditNotitie = (notitie: Message) => { editingNotitieId.value = notitie.id; }; 
     const cancelEditNotitie = () => { editingNotitieId.value = null; }; 
     
     const saveEditNotitie = async (notitie: Message, bericht: string) => { 
-        notitieError.value = ''; 
-        
-        try { 
-            const updatedNotitie = await notitieActions.update( ticketId, notitie.id, { bericht: bericht.trim() } ); 
-            
-            const index = notities.value.findIndex( item => item.id === notitie.id ); 
-            
-            if (index !== -1) { 
-                notities.value[index] = updatedNotitie; 
-            } 
-            
-            editingNotitieId.value = null; 
-        } catch (error) { 
-            console.error('Notitie wijzigen mislukt:', error); 
-            notitieError.value = 'De notitie kon niet worden gewijzigd. Probeer het opnieuw.'; 
-        } 
+        destroyErrors();
+        destroyMessage();
+
+        const result = await handleApiAction(() =>
+            notitieActions.update(ticketId, notitie.id, {bericht: bericht.trim()})
+        );
+
+        if (!result.success) return;
+
+        replaceMessage(notities.value, result.data);
+        editingNotitieId.value = null;
     };
 
+    const deleteNotitie = async (notitie: Message) => {
+        if (!window.confirm('Weet je zeker dat je deze notitie wilt verwijderen?')) {
+            return;
+        }
+
+        destroyErrors();
+        destroyMessage();
+
+        const result = await handleApiAction(() =>
+            notitieActions.delete(ticketId, notitie.id)
+        );
+
+        if (!result.success) return;
+
+        notities.value = notities.value.filter(item => item.id !== notitie.id);
+    };
+    //confirm van admin acties
     const confirmChanges = async () => {
         if (!ticket.value) return;
-        
-        await ticketStore.actions.update(ticketId, {...ticket.value, user_id: selectedAdmin.value, status: selectedStatus.value});
-    }
+
+        destroyErrors();
+        destroyMessage();
+
+        await handleApiAction(() => ticketStore.actions.update(ticketId, {...ticket.value!, user_id: selectedAdmin.value, status: selectedStatus.value}));
+    };
 </script>
 
 <template>
-    <div v-if="ticket"> <!--opties voor bewerken van ticket -->
+    <div v-if="ticket"> 
+        <!--opties voor bewerken van ticket -->
         <br>
         <router-link :to="{name: 'tickets.edit', params:{id: ticketId}}">Ticket bewerken</router-link>
         <div v-if="isAdmin">
@@ -154,7 +164,8 @@
             <button type="button" @click="confirmChanges">Wijzigingen opslaan</button>
         </div>
     </div>
-    <div v-if="ticket"> <!--informatie over ticket-->
+    <div v-if="ticket"> 
+        <!--informatie over ticket-->
         <br>
         <h2>Probleem:</h2>
         <p>{{ ticket.titel }}</p>
@@ -163,13 +174,14 @@
         <p>Ticket aangemaakt door {{ ticket.creator }} op: {{ formatDate(ticket.created_at) }}</p>
         <p>Laatst bijgewerkt op: {{ formatDate(ticket.updated_at) }}</p>
         <p v-if="isAdmin">Toegewezen aan admin: {{ ticket.admin }}</p>
-        <div v-if="isAdmin"> <!--admin notities-->
+        <p v-if="getMessage">{{ getMessage }}</p>
+        <div v-if="isAdmin"> 
+            <!--admin notities-->
             <br>
-            <h2>Notities:</h2>
             <button v-if="!showNotitieForm" type="button" @click="showNotitieForm = true" > Notitie toevoegen </button>
+            <h2>Notities:</h2>
             <ReactionForm v-if="showNotitieForm" @submit="submitNotitie" />
             <button v-if="showNotitieForm" type="button" @click="showNotitieForm = false" > Annuleren </button>
-            <p v-if="notitieError"> {{ notitieError }} </p>
             <p v-if="notities.length === 0"> Nog geen notities... </p>
             <div v-for="notitie in notities" :key="notitie.id"> 
                 <strong>{{ notitie.user }}</strong> 
@@ -179,12 +191,14 @@
                 <div v-else> 
                     <p>{{ notitie.bericht }}</p> 
                     <p>{{ formatDate(notitie.created_at) }}</p> 
-                    <button type="button" @click="startEditNotitie(notitie)" > Bewerken </button> 
+                    <button type="button" @click="startEditNotitie(notitie)" > Bewerken </button> | 
+                    <button type="button" @click="deleteNotitie(notitie)">Verwijderen</button>
                 </div>
             </div>
         </div>
         <br>
         <div>
+            <!--reacties-->
             <button v-if="!showReactieForm" @click="showReactieForm = true">
                 Voeg reactie toe.
             </button>
@@ -192,7 +206,6 @@
             <button v-if="showReactieForm" @click="showReactieForm = false">
                 Annuleren
             </button>
-            <p v-if="reactieError">{{ reactieError }}</p>
             <br>
             <h2>Reacties:</h2>
             <p v-if="reacties.length === 0">Nog geen reacties...</p>

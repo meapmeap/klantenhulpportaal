@@ -1,5 +1,5 @@
 import { storeModuleFactory } from "../../services/store";
-import { getRequest, postRequest, putRequest } from "../../services/http";
+import { getRequest, postRequest, putRequest, deleteRequest } from "../../services/http";
 
 export interface Ticket {
     id: number;
@@ -52,6 +52,10 @@ const createMessageActions = (moduleName: 'reacties' | 'notities') => {
             
             return data;
         },
+
+        delete: async (ticketId: number, messageId: number) => {
+            await deleteRequest(`/api/tickets/${ticketId}/${moduleName}/${messageId}`);
+        }
     }
 }
 

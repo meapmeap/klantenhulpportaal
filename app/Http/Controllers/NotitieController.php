@@ -44,11 +44,8 @@ class NotitieController extends Controller
         );
     }
 
-    public function update(
-        StoreNotitieRequest $request,
-        Ticket $ticket,
-        Notitie $notitie
-    ) {
+    public function update(StoreNotitieRequest $request, Ticket $ticket, Notitie $notitie) 
+    {
         if (!$this->isAdmin($request)) {
             abort(403);
         }
@@ -77,5 +74,20 @@ class NotitieController extends Controller
             'ticket_id' => $notitie->ticket_id,
             'created_at' => $notitie->created_at,
         ];
+    }
+
+    public function destroy(Request $request, Ticket $ticket, Notitie $notitie)
+    {
+        if (!$this->isAdmin($request)) {
+            abort(403);
+        }
+
+        if ((int) $notitie->ticket_id !== (int) $ticket->id) {
+            abort(404);
+        }
+
+        $notitie->delete();
+
+        return response()->noContent();
     }
 }

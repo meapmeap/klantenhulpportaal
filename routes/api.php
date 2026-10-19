@@ -34,6 +34,7 @@ Route::middleware(['auth:sanctum', 'admin'])->group(function () {
     Route::get('/tickets/{ticket}/notities', [NotitieController::class, 'index']);
     Route::post('/tickets/{ticket}/notities', [NotitieController::class, 'store']);
     Route::put('/tickets/{ticket}/notities/{notitie}', [NotitieController::class, 'update']);
+    Route::delete('/tickets/{ticket}/notities/{notitie}', [NotitieController::class, 'destroy']);
 });
 
 //routes die iedereen kan gebruiken die is ingelogd
