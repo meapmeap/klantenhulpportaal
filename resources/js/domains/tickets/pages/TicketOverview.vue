@@ -16,7 +16,7 @@
 <template>
     <div v-if="tickets">
         <table>
-            <tbody>
+            <thead>
                 <tr>
                     <th>ID | </th>
                     <th>Titel | </th>
@@ -27,6 +27,8 @@
                     <th>Laatste update op | </th>
                     <th v-if="isAdmin">Toegewezen aan | </th>
                 </tr>
+            </thead>
+            <tbody>
                 <tr v-for="ticket in tickets" :key="ticket.id">
                     <td>{{ ticket.id }}</td>
                     <td><router-link :to="{ name: 'tickets.details', params: { id: ticket.id } }">{{ ticket.titel }}</router-link></td>

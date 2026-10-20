@@ -1,7 +1,7 @@
 import { ref, computed } from "vue";
 import { getRequest, postRequest } from "../http";
 
-interface User {
+export interface User {
     id: number;
     voornaam: string;
     achternaam: string;

@@ -1,6 +1,6 @@
 <script setup lang="ts">
     import { Message, statuses, ticketStore, reactieActions, notitieActions } from '../store';
-    import { adminStore } from '../../users/store';
+    import { userStore } from '../../users/store';
     import { useRoute } from 'vue-router';
     import { formatDate } from '../../../services/utils/formatDate';
     import { authStore } from '../../../services/store/auth';
@@ -17,7 +17,7 @@
     const selectedStatus = ref(ticket.value?.status ?? '');
 
     const isAdmin = computed(() => authStore.isAdmin.value);
-    const admins = adminStore.getters.all;
+    const admins = userStore.getters.all;
     //reacties
     const reacties = ref<Message[]>([]);
     const showReactieForm = ref(false);
@@ -41,7 +41,7 @@
                 notities.value = notitiesResult.data;
             }
 
-            await handleApiAction(() => adminStore.actions.getAll('/api/users/admins'));
+            await handleApiAction(() => userStore.actions.getAll('/api/users/admins'));
         }
     });
     //vervanger voor notitie of reactie

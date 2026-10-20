@@ -25,12 +25,14 @@
     <div v-if="isAdmin">
         <router-link :to="{name: 'categories.create'}">Nieuwe categorie maken.</router-link>
         <table>
-            <tbody>
+            <thead>
                 <tr>
                     <th>Categorie</th>
                     <th>Beschrijving</th>
                     <th>acties</th>
                 </tr>
+            </thead>
+            <tbody>
                 <tr v-for="categorie in categories" :key="categorie.id">
                     <td>{{ categorie.naam }}</td>
                     <td>{{ categorie.beschrijving }}</td>

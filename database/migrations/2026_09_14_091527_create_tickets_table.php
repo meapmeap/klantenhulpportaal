@@ -16,8 +16,8 @@ return new class extends Migration
             $table->string('titel'); 
             $table->foreignId('categorie_id')->constrained('categorieen'); 
             $table->string('status'); 
-            $table->foreignId('user_id')->nullable()->constrained('users'); 
-            $table->foreignId('created_by')->constrained('users'); 
+            $table->foreignId('user_id')->nullable()->constrained('users')->nullOnDelete(); 
+            $table->foreignId('created_by')->nullable()->constrained('users')->nullOnDelete(); 
             $table->timestamps();
         });
     }

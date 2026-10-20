@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('reacties', function (Blueprint $table) {
             $table->id(); 
             $table->text('bericht'); 
-            $table->foreignId('user_id')->constrained('users'); 
+            $table->foreignId('user_id')->nullable()->constrained('users')->nullOnDelete();
             $table->foreignId('ticket_id')->constrained('tickets'); 
             $table->timestamps();
         });

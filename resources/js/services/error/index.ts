@@ -47,7 +47,6 @@ export const handleApiAction = async <T>(action: () => Promise<T>): Promise<Acti
         const data = await action();
         return { success: true, data };
     } catch {
-        // De Axios-interceptor heeft de fout al afgehandeld.
         return { success: false };
     }
 };
