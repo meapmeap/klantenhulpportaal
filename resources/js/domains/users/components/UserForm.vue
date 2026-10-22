@@ -1,11 +1,12 @@
 <script setup lang="ts">
     import { NewUser } from "../store";
+    import { User } from "../../../services/store/auth";
     import { ref } from "vue";
 
-    const props = defineProps<{ user: NewUser; isEditing: boolean; }>();
+    const props = defineProps<{ user: User | NewUser; isEditing: boolean; }>();
     const emit = defineEmits<{ submit: [user: NewUser]; }>();
 
-    const form = ref({ ...props.user });
+    const form = ref<NewUser>({ ...props.user, wachtwoord: '' });
 
     const handleSubmit = () => { emit('submit', form.value) }
 </script>
@@ -40,6 +41,7 @@
         <p v-if="props.isEditing"> Laat leeg als je het wachtwoord niet wilt wijzigen. </p>
         <br><br>
 
-        <button type="submit">Opslaan</button>
+        <button type="submit">Opslaan</button> | 
+        <router-link :to="{name: 'users.overview'}">Annuleren</router-link>
     </form>
 </template>
