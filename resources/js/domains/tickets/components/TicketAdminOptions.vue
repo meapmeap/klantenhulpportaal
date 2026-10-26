@@ -35,36 +35,27 @@
 </script>
 
 <template>
-    <div>
+    <div class="column-text">
         <h2>Admin opties:</h2>
-
-        <label for="admin">Ticket toewijzen aan: </label>
-        <select id="admin" v-model="selectedAdmin">
-            <option :value="null">Geen admin</option>
-            <option
-                v-for="admin in admins"
-                :key="admin.id"
-                :value="admin.id"
-            >
-                {{ admin.voornaam }} {{ admin.achternaam }}
-            </option>
-        </select>
-
-        <br>
-
-        <label for="status">Status van ticket wijzigen: </label>
-        <select id="status" v-model="selectedStatus">
-            <option
-                v-for="status in statuses"
-                :key="status"
-                :value="status"
-            >
-                {{ status }}
-            </option>
-        </select>
-
-        <br>
-
+        <div class="row">
+            <label for="admin">Ticket toewijzen aan: </label>
+            <select id="admin" v-model="selectedAdmin">
+                <option :value="null">Geen admin</option>
+                <option v-for="admin in admins" :key="admin.id" :value="admin.id">
+                    {{ admin.voornaam }} {{ admin.achternaam }}
+                </option>
+            </select>
+        </div>
+        
+        <div class="row">
+            <label for="status">Status van ticket wijzigen: </label>
+            <select id="status" v-model="selectedStatus">
+                <option v-for="status in statuses" :key="status" :value="status">
+                    {{ status }}
+                </option>
+            </select>
+        </div>
+        
         <button type="button" @click="confirmChanges">
             Wijzigingen opslaan
         </button>

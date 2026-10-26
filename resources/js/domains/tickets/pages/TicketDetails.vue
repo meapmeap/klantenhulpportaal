@@ -18,15 +18,13 @@
 </script>
 
 <template>
-    <div v-if="ticket"> 
+    <div v-if="ticket" class="section"> 
         <!--opties voor bewerken van ticket -->
-        <br>
         <router-link :to="{name: 'tickets.edit', params:{id: ticketId}}">Ticket bewerken</router-link>
         <TicketAdminOptions v-if="isAdmin" :ticket-id="ticketId" />
     </div>
-    <div v-if="ticket"> 
+    <div v-if="ticket" class="section"> 
         <!--informatie over ticket-->
-        <br>
         <h2>Probleem:</h2>
         <p>{{ ticket.titel }}</p>
         <p>Status: {{ ticket.status }}</p>
@@ -34,13 +32,12 @@
         <p>Ticket aangemaakt door {{ ticket.creator }} op: {{ formatDate(ticket.created_at) }}</p>
         <p>Laatst bijgewerkt op: {{ formatDate(ticket.updated_at) }}</p>
         <p v-if="isAdmin">Toegewezen aan admin: {{ ticket.admin }}</p>
-        <p v-if="getMessage">{{ getMessage }}</p>
-        <div v-if="isAdmin"> 
+        <p v-if="getMessage" class="section">Error: {{ getMessage }}</p>
+        <div v-if="isAdmin" class="column"> 
             <!--admin notities-->
             <TicketNotes v-if="isAdmin" :ticket-id="ticketId" />
         </div>
-        <br>
-        <div>
+        <div class="column">
             <!--reacties-->
             <TicketReactions :ticket-id="ticketId" />
         </div>

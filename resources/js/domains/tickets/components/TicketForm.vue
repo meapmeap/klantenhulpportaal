@@ -23,20 +23,25 @@
 </script>
 
 <template>
-    <form @submit.prevent="handleSubmit">
-        <label>Omschrijving van het probleem: </label>
-        <textarea v-model="form.titel" required></textarea>
-        <br><br>
+    <div class="section">
+        <form @submit.prevent="handleSubmit" class="column">
+            <label>Omschrijving van het probleem: </label>
+            <textarea v-model="form.titel" required class="input-field"></textarea>
 
-        <label>Categorie: </label>
-        <select v-model="form.categorie_id" required>
-            <option v-for="categorie in categories" :key="categorie.id" :value="categorie.id">
-                {{ categorie.naam }}
-            </option>
-        </select>
-        <br><br>
+            <div class="row">
+                <label>Categorie: </label>
+                <select v-model="form.categorie_id" required>
+                    <option v-for="categorie in categories" :key="categorie.id" :value="categorie.id">
+                    {{ categorie.naam }}
+                    </option>
+                </select>
+            </div>
 
-        <button type="submit">Versturen</button> | 
-        <router-link :to="{name: 'tickets.details', params: { id: ticketId }}">Annuleren</router-link>
-    </form>
+            <div class="row">
+                <button type="submit">Versturen</button> | 
+                <router-link v-if="ticketId" :to="{name: 'tickets.details', params: { id: ticketId }}">Annuleren</router-link>
+                <router-link v-if="!ticketId" :to="{name: 'tickets.overview'}">Annuleren</router-link>
+            </div>
+        </form>
+    </div>
 </template>

@@ -11,16 +11,18 @@
 </script>
 
 <template>
-    <form @submit.prevent="handleSubmit">
-        <label>Categorie: </label>
-        <input v-model="form.naam" required />
-        <br><br>
+    <div class="section">
+        <form @submit.prevent="handleSubmit" class="column">
+            <label>Categorie: </label>
+            <input v-model="form.naam" required class="input-field" />
 
-        <label>Korte Omschrijving: </label>
-        <textarea v-model="form.beschrijving"></textarea>
-        <br><br>
+            <label>Korte Omschrijving: </label>
+            <textarea v-model="form.beschrijving" class="input-field"></textarea>
 
-        <button type="submit">Opslaan</button> | 
-        <router-link :to="{name: 'categories.overview'}">Annuleren</router-link>
-    </form>
+            <div class="row">
+                <button type="submit">Opslaan</button> | 
+                <router-link :to="{name: 'categories.overview'}">Annuleren</router-link>
+            </div>
+        </form>
+    </div>
 </template>

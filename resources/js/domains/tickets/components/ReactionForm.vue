@@ -18,14 +18,14 @@
 </script>
 
 <template>
-    <form @submit.prevent="handleSubmit">
+    <form @submit.prevent="handleSubmit" class="column">
         <label for="reactie">Bericht:</label>
-        <br>
-        <textarea id="reactie" v-model="reactie" required></textarea>
-        <br>
-        <button type="submit">Opslaan</button>
-        <button v-if="initialMessage !== undefined" type="button" @click="emit('cancel')">
-            Annuleren
-        </button>
+        
+        <textarea id="reactie" v-model="reactie" required class="input-field"></textarea>
+        
+        <div class="row">
+            <button type="submit">Opslaan</button>
+            <button type="button" @click="emit('cancel')">Annuleren</button>
+       </div> 
     </form>
 </template>

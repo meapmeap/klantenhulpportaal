@@ -7,3 +7,38 @@
     --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
 }
+
+/* Elementen onder elkaar */
+.column {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+}
+
+/* Elementen direct onder elkaar, voor tekst */
+.column-text {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0px;
+}
+
+/* Elementen naast elkaar (knoppen enzo) */
+.row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+}
+
+/* groep met extra ruimte erboven */
+.section {
+    margin-top: 20px;
+}
+
+/* groep voor invoervelden */
+.input-field {
+    border: 1px solid black;
+    padding: 8px;
+}
