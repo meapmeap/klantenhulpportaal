@@ -1,5 +1,6 @@
 import { ref, computed } from "vue";
 import { getRequest, postRequest } from "../http";
+import { destroyErrors, destroyMessage } from "../error";
 
 export interface User {
     id: number;
@@ -25,6 +26,9 @@ const fetchUser = async() => {
 };
 
 const login = async (email_adres: string, wachtwoord: string) => {
+    destroyErrors();
+    destroyMessage();
+
     await getRequest('/sanctum/csrf-cookie');
 
     const { data } = await postRequest('/api/login', {

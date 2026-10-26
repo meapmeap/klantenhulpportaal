@@ -11,45 +11,51 @@ use App\Http\Controllers\NotitieController;
 //authenticatie
 Route::post('/login', [UserController::class, 'login']);
 Route::post('/register', [UserController::class, 'register']);
-Route::post('/logout', [UserController::class, 'logout']) ->middleware('auth:sanctum');
 
 //wachtwoord reset, mogelijk zonder log in
-Route::post('/forgot-password', [PasswordResetController::class, 'sendResetLink']);
-Route::post('/reset-password', [PasswordResetController::class, 'resetPassword']);
-
-//normale user kan alleen eigen account zien en aanpassen
-Route::get('/profile', [UserController::class, 'profile']) ->middleware('auth:sanctum');
-
-//routes die alleen gebruikt kunnen worden als je bent ingelogd als admin
-Route::middleware(['auth:sanctum', 'admin'])->group(function () {
-    //users
-    Route::get('/users/admins', [UserController::class, 'admins']);
-    Route::get('/users', [UserController::class, 'index']);
-    Route::post('/users', [UserController::class, 'store']);
-    Route::put('/users/{user}', [UserController::class, 'update']);
-    Route::delete('/users/{user}', [UserController::class, 'destroy']);
-    //categories
-    Route::post('/categories', [CategorieController::class, 'store']);
-    Route::put('/categories/{categorie}', [CategorieController::class, 'update']);
-    Route::delete('/categories/{categorie}', [CategorieController::class, 'destroy']);
-    //notities
-    Route::get('/tickets/{ticket}/notities', [NotitieController::class, 'index']);
-    Route::post('/tickets/{ticket}/notities', [NotitieController::class, 'store']);
-    Route::put('/tickets/{ticket}/notities/{notitie}', [NotitieController::class, 'update']);
-    Route::delete('/tickets/{ticket}/notities/{notitie}', [NotitieController::class, 'destroy']);
+Route::controller(PasswordResetController::class)->group(function () {
+    Route::post('/forgot-password', 'sendResetLink');
+    Route::post('/reset-password', 'resetPassword');
 });
 
-//routes die iedereen kan gebruiken die is ingelogd
+//routes waarvoor je ingelogd moet zijn
 Route::middleware('auth:sanctum')->group(function () {
+    //authenticatie
+    Route::post('/logout', [UserController::class, 'logout']);
+    Route::get('/profile', [UserController::class, 'profile']);
     //categories
     Route::get('/categories', [CategorieController::class, 'index']);
     //tickets
-    Route::get('/tickets', [TicketController::class, 'index']);
-    Route::get('/tickets/{ticket}', [TicketController::class, 'show']);
-    Route::post('/tickets', [TicketController::class, 'store']);
-    Route::put('/tickets/{ticket}', [TicketController::class, 'update']);
+    Route::controller(TicketController::class)->group(function () {
+        Route::get('/tickets', 'index');
+        Route::get('/tickets/{ticket}', 'show');
+        Route::post('/tickets', 'store');
+        Route::put('/tickets/{ticket}', 'update');
+    });
     //reacties
-    Route::get('/tickets/{ticket}/reacties', [ReactieController::class, 'index']);
-    Route::post('/tickets/{ticket}/reacties', [ReactieController::class, 'store']);
-    Route::put('/tickets/{ticket}/reacties/{reactie}', [ReactieController::class, 'update']);
+    Route::controller(ReactieController::class)->group(function () {
+        Route::get('/tickets/{ticket}/reacties', 'index');
+        Route::post('/tickets/{ticket}/reacties', 'store');
+        Route::put('/tickets/{ticket}/reacties/{reactie}', 'update');
+    });
+
+    //routes die alleen admins kunnen gebruiken
+    Route::middleware('admin')->group(function () {
+        //users
+        Route::get('/users/admins', [UserController::class, 'admins']);
+        Route::apiResource('users', UserController::class)->only(['index', 'store', 'update', 'destroy']);
+        // Categorieën
+        Route::controller(CategorieController::class)->group(function () {
+            Route::post('/categories', 'store');
+            Route::put('/categories/{categorie}', 'update');
+            Route::delete('/categories/{categorie}', 'destroy');
+        });
+        // Notities
+        Route::controller(NotitieController::class)->group(function () {
+            Route::get('/tickets/{ticket}/notities', 'index');
+            Route::post('/tickets/{ticket}/notities', 'store');
+            Route::put('/tickets/{ticket}/notities/{notitie}', 'update');
+            Route::delete('/tickets/{ticket}/notities/{notitie}', 'destroy');
+        });
+    });
 });

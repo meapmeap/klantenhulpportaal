@@ -13,7 +13,10 @@ const http = axios.create({
 http.interceptors.response.use(
     response => response,
     error => {
-        handleApiError(error);
+        if (error.response?.status !== 401) {
+            handleApiError(error);
+        }
+        
         return Promise.reject(error);
     }
 );
